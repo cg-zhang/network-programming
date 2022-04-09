@@ -222,3 +222,53 @@ int shutdown(int sock, int howto);
 	       SHUT_WR      断开输出流，无法写入数据
 	       SHUT_RDWR    同时断开I/O流
 */
+
+
+// 利用域名获取IP地址
+#include <netdb.h>
+
+struct hostent *gethostbyname(const char *hostname);
+               // 成功时返回hostent结构体地址，失败时返回NULL指针
+
+
+// 利用IP地址获取域名信息
+#include <netdb.h>
+
+struct hostent *gethostbyaddr(const char *addr, socklen_t len, int family);
+               // 成功时返回hostent结构体变量地址值，失败时返回NULL指针
+
+/*
+	addr: 含有IP地址信息的in_addr结构体指针。为了同时传递IPv4地址之外的其他信息，该变量的类型为char指针
+	len: 向第一个参数传递的地址信息的字节数，IPv4时为4，IPv时为6
+	family: 传递地址族信息
+*/
+
+
+// 读取套接字可选项
+#include <sys/socket.h>
+
+int getsockopt(int sock, int level, int optname, void *optval, socklen_t *optlen);
+    // 成功时返回0，失败返回-1
+
+/*
+	sock: 用于查看选项套接字文件描述符
+	level: 要查看的可选项的协议层
+	optname: 要查看的可选项名
+	optval: 保存查看结果的缓冲地址值
+	optlen: 向第四个参数optval传递的缓冲大小。调用函数后，该变量中保存通过第四个参数返回的可选项信息的字节数
+*/
+
+
+// 设置套接字可选项
+#include <sys/socket.h>
+
+int setsockopt(int sock, int level, int optname, const void *optval, socklen_t *optlen);
+    // 成功时返回0，失败返回-1
+
+/*
+	sock: 用于更改选项套接字文件描述符
+	level: 要更改的可选项的协议层
+	optname: 要更改的可选项名
+	optval: 保存要更改的选项信息的缓冲地址值
+	optlen: 向第四个参数optval传递的可选项信息的字节数
+*/
