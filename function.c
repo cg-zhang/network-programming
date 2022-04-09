@@ -207,3 +207,18 @@ ssize_t recvfrom(int sock, void *buff, size_t nbytes, int flags, struct sockaddr
 	from: 存有发送端地址信息的sockaddr结构体变量的地址值
 	addrlen: 保存参数为from的结构体变量长度的变量地址值
 */
+
+
+// 优雅断开函数
+#include <sys/socket.h>
+
+int shutdown(int sock, int howto);
+    // 成功时返回0，失败返回-1
+
+/*
+	sock: 需要断开地套接字文件描述符
+	howto: 传递断开方式信息
+	       SHUT_RD      断开输入流，无法接收数据
+	       SHUT_WR      断开输出流，无法写入数据
+	       SHUT_RDWR    同时断开I/O流
+*/
