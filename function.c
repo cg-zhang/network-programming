@@ -271,4 +271,37 @@ int setsockopt(int sock, int level, int optname, const void *optval, socklen_t *
 	optname: 要更改的可选项名
 	optval: 保存要更改的选项信息的缓冲地址值
 	optlen: 向第四个参数optval传递的可选项信息的字节数
+*/ 
+
+
+// 创建多进程
+#include <unistd.h>
+
+pid_t fork(void);
+      // 成功时返回进程ID，失败时返回-1
+
+
+// 销毁僵尸进程1：利用wait函数
+#include <sys/wait.h>
+
+pid_t wait(int * statloc);
+      // 成功时返回终止的子进程ID，失败时返回-1
+	  // (如果没有已终止的子进程，那么程序将阻塞，直到有子进程终止)
+/* 
+	调用此函数如果已有子进程终止，那么子进程终止时传递的返回值(exit函数的参数值、main函数的返回值)将保存到该函数的参数所指内存空间，参数还含有其他信息，通过下面两个函数来分离：
+	WIFEXITED子进程正常终止时返回"真"(true)
+	WEXITSTATUS返回子进程的返回值
+*/
+
+
+// 销毁僵尸进程2：使用waitpid函数
+#include <sys/wait.h>
+
+pid_t waitpid(pid_t pid, int * statloc, int options);
+      // 成功时返回终止的子进程ID(没有子进程终止则返回0)，失败返回-1
+
+/*
+	pid: 等待终止的目标子进程的ID，若传递-1，则与wait函数相同，可以等待任意子进程终止
+	statloc: 与wait函数的参数意义相同
+	options: 传递头文件sys/wait.h声明的常量WNOHANG，即使没有终止的子进程也不会进入阻塞状态，而是返回0并退出函数
 */
