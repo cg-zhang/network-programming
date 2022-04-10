@@ -305,3 +305,31 @@ pid_t waitpid(pid_t pid, int * statloc, int options);
 	statloc: 与wait函数的参数意义相同
 	options: 传递头文件sys/wait.h声明的常量WNOHANG，即使没有终止的子进程也不会进入阻塞状态，而是返回0并退出函数
 */
+
+
+// 信号注册函数
+#include <signal.h>
+
+void (*signal(int signo, void (*func)(int)))(int);
+     // 为了在产生信号时调用，返回之前注册的函数指针(发生信号时将唤醒由于调用sleep函数而进入阻塞状态的进程)
+
+/*
+	调用此函数时，第一个参数为特殊情况信息，第二个参数为第一个参数代表的情况发生时，所调用的函数(返回值为void，参数为int)
+	特殊情况有:
+	SIGALRM: 已到通过alarm函数注册的时间
+	SIGINE: 输入CTRL + C
+	SIGCHLD: 子进程终止
+*/
+
+
+ // alarm函数
+#include <unistd.h>
+
+unsigned int alarm(unsigned int seconds);
+         // 返回0或以秒为单位的距SIGALRM信号发生所剩时间
+
+/*
+	如果调用该函数的同时传递一个 参数，相应时间后将产生SIGALRM信号。如果传递0，则之前对信号的预约取消
+	如果通过该函数预约信号后未指定该信号对应的处理函数(signal函数)，则终止进程
+*/
+
