@@ -333,3 +333,16 @@ unsigned int alarm(unsigned int seconds);
 	如果通过该函数预约信号后未指定该信号对应的处理函数(signal函数)，则终止进程
 */
 
+
+// sigaction函数(signal在unix不同os中可能存在差别，但sigaction不会，因此更稳定)
+#include <signal.h>
+
+int sigaction(int signo, const struct sigaction *act, struct sigaction *oldact);
+    // 成功时返回0，失败返回-1
+
+/*
+	signo: 与signal函数相同，传递信号信息
+	act: 对应于第一个参数的信号处理函数
+	oldact: 通过此参数获取之前注册的信号处理函数指针，若不需要传递0
+*/
+
