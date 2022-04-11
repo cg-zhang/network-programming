@@ -346,3 +346,15 @@ int sigaction(int signo, const struct sigaction *act, struct sigaction *oldact);
 	oldact: 通过此参数获取之前注册的信号处理函数指针，若不需要传递0
 */
 
+
+// 管道通信
+#include <unistd.h>
+
+int pipe(int filedes[2]);
+    // 成功时返回0，失败时返回-1
+
+/*
+	filedes[0]: 通过管道接收数据时使用的文件描述符，即管道出口
+	filedes[1]: 通过管道传输数据时使用的文件描述符，即管道入口
+    (进入管道中的数据，不分主，先读的进程会把数据取走)
+*/
