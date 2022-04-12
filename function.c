@@ -103,6 +103,7 @@ unsigned long ntohl(unsigned long);
 in_addr_t inet_addr(const char *string);
           // 成功时返回32位大端序整数型值，失败返回INADDR_NONE
 
+
 int inet_aton(const char *string, struct in_addr *addr);
     // 成功时返回1，失败返回0，可以直接将转换的地址赋给结构体中的地址
 
@@ -135,6 +136,20 @@ int bind(int sockfd, struct sockaddr *myaddr, socklen_t addrlen);
 	sockfd: 要分配地址信息的套接字文件描述符(socket返回值)
 	myaddr: 存有地址信息的结构体变量地址值(通过对sockaddr_in结构体类型值强转换)
 	addrlen: 第二个结构体变量的长度
+
+	第二个参数结构体:
+	struct sockaddr_in
+	{
+		sa_family_t    sin_family;     // 地址族
+		uint16_t       sin_port;       // 16位端口号
+		struct in_addr sin_addr;       // 32位IP地址
+		char           sin_zero[8];    // 不使用，初始化为0
+	};
+     
+    struct in_addr
+    {
+		in_addr_t      s_addr;         // 32位IP地址，整数类型
+    };
 */
 
 
@@ -241,6 +256,15 @@ struct hostent *gethostbyaddr(const char *addr, socklen_t len, int family);
 	addr: 含有IP地址信息的in_addr结构体指针。为了同时传递IPv4地址之外的其他信息，该变量的类型为char指针
 	len: 向第一个参数传递的地址信息的字节数，IPv4时为4，IPv时为6
 	family: 传递地址族信息
+
+	struct hostent
+	{
+		char * h_name;        // 官方域名
+		char ** h_aliases;    // 除了官方域名还有其他域名可访问当前主页
+		int h_addrtype;       // 协议族类型，包含IPv4和IPv6
+		int h_length;         // IP地址长度(字节)
+		char ** h_addr_list;  // 可能有多个IP对应一个域名，进行负载均衡
+	};
 */
 
 
@@ -357,4 +381,28 @@ int pipe(int filedes[2]);
 	filedes[0]: 通过管道接收数据时使用的文件描述符，即管道出口
 	filedes[1]: 通过管道传输数据时使用的文件描述符，即管道入口
     (进入管道中的数据，不分主，先读的进程会把数据取走)
+*/
+
+
+// 设置检查(监视)范围及超时
+#include <sys/select.h>
+#include <sys/time.h>
+
+int select(int maxfd, fd_set *readset, fd_set *writeset, fd_set *exceptset, const struct timeval *timeout);
+    // 成功时返回大于0的值，失败时返回-1，超时返回0
+
+/*
+	maxfd: 监视对象文件描述符数量
+	readset: 将所有关注“是否存在待读取数据”的文件描述符注册到fd_set型变量，并传递其地址值
+	writeset: 将所有关注“是否可传输无阻塞数据”的文件描述符注册到fd_set型变量，并传递其地址值
+	exceptset: 将所有关注“是否发生异常”的文件描述符注册到fd_set型变量，并传递其地址值
+	timeout: 调用select函数后，为防止陷入无限阻塞的状态，传递超时信息
+	返回值: 发生错误时返回-1，超时返回0。因发生关注的事件返回时，返回大于0的值，代表发生事件的文件描述符
+
+    // 调用select函数后，此结构体中的时间会动态变化，表示超时前剩余时间
+	struct timeval 
+	{
+		long tv_sec;    // 超时时间(秒数)
+		long tv_usec;   // 微秒数
+	};
 */
