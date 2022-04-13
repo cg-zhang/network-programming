@@ -368,6 +368,13 @@ int sigaction(int signo, const struct sigaction *act, struct sigaction *oldact);
 	signo: 与signal函数相同，传递信号信息
 	act: 对应于第一个参数的信号处理函数
 	oldact: 通过此参数获取之前注册的信号处理函数指针，若不需要传递0
+
+	struct sigaction
+	{
+		void (*sa_handler)(int);   // 信号处理函数，函数指针
+		sigset_t sa_mask;    // 信号相关选项和特性，初始化为0   sigemptyset(&act.sa_mask)
+		int sa_flags;    // 同上
+	};
 */
 
 
@@ -405,4 +412,75 @@ int select(int maxfd, fd_set *readset, fd_set *writeset, fd_set *exceptset, cons
 		long tv_sec;    // 超时时间(秒数)
 		long tv_usec;   // 微秒数
 	};
+*/
+
+
+// Linux的send函数
+#include <sys/socket.h>
+
+ssize_t send(int sockfd, const void *buf, size_t nbytes, int flags);
+        // 成功时返回发送的字节数(signed int)，失败返回-1
+
+/*
+	sockfd: 表示与数据传输对象的连接的套接字文件描述符
+	buf: 保存待传输数据的缓冲地址值
+	nbytes: 待传输数据的字节数(unsigned int)
+	flags: 传输数据时指定的可选项信息
+*/
+
+
+// Linux的recv函数
+#include <sys/socket.h>
+
+ssize_t recv(int sockfd, void *buf, size_t nbytes, int flags);
+        // 成功时返回接收的字节数(收到EOF时返回0)，失败返回-1
+
+/*
+	sockfd: 表示与数据接收对象的连接的套接字文件描述符
+	buf: 保存接收数据的缓冲地址值
+	nbytes: 可接收数据的字节数(unsigned int)
+	flags: 接收数据时指定的可选项信息
+*/
+
+
+/* 
+	 可选项                    含义                           
+	MSG_OOB            用于传输带外数据(紧急消息)                
+	MSG_PEEK		   验证输入缓冲中是否存在接收的数据(发送方)     可读取缓冲区数据，但是不会删除缓冲区                 
+	MSG_DONTROUTE      数据传输中不参照路由表，在本地网络
+	                   中寻找目的地(发送方)                         
+    MSG_DONTWAIT       调用I/O函数时不阻塞，用于使用非阻塞I/O(发送方 & 接收方)
+    MSG_WAITALL        防止函数返回，直到接收全部请求的字节数(接收方)
+*/
+
+
+// Linux中的writev函数
+#include <sys/uio.h>
+
+ssize_t writev(int filedes, const struct iovec *iov, int iovcnt);
+        // 成功时返回发送的字节数，失败时返回-1
+
+/*
+	filedes: 表示数据传输对象的套接字文件描述符。但该函数不限于套接字，还可以像read一样传递文件或标准输出描述符
+	iov: iovec结构体数组的地址值，每个结构体中包含待发送数据的位置(指针)和长度信息
+	iovcnt: 向第二个参数传递的数组长度，代表有几个缓冲区
+
+	struct iovec
+	{
+		void * iov_base;    // 缓冲区地址
+		size_t iov_len;     // 缓冲区大小
+	};
+*/
+
+
+// Linux中的readv函数
+#include <sys/uio.h>
+
+ssize_t readv(int filedes, const struct iovec *iov, int iovcnt);
+        // 成功时返回接收的字节数，失败时返回-1
+
+/*
+	filedes: 传递接收数据的文件描述符
+	iov: 包含数据保存位置和大小信息和iovec结构体数组的地址值
+	iovcnt: 向第二个参数中数组的长度
 */
