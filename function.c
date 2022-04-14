@@ -484,3 +484,21 @@ ssize_t readv(int filedes, const struct iovec *iov, int iovcnt);
 	iov: 包含数据保存位置和大小信息和iovec结构体数组的地址值
 	iovcnt: 向第二个参数中数组的长度
 */
+
+
+// 多播
+
+// 设置TTL，指定协议层和选项名
+setsockopt(send_sock, IPPROTO_IP, UP_MULTICAST_TTL, (void *)&time_live, sizeof(time_live));
+
+// 加入多播组
+struct ip_mrep join_adr;
+join_adr.imr_multiaddr.s_addr = "多播组地址信息";
+join_adr.imr_interfact.s_addr = "加入多播组的主机地址信息";
+setsockopt(recv_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (void *)& join_adr, sizeof(join_adr));
+
+struct ip_mreq
+{
+	struct in_addr imr_multiaddr;   // 加入的组IP地址
+	struct in_addr imr_interface;   // 加入该组的套接字所属主机的IP地址，也可使用INADDR_ANY
+};
