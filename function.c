@@ -502,3 +502,52 @@ struct ip_mreq
 	struct in_addr imr_multiaddr;   // 加入的组IP地址
 	struct in_addr imr_interface;   // 加入该组的套接字所属主机的IP地址，也可使用INADDR_ANY
 };
+
+
+// C语言标准I/O
+
+FIFE *fopen(const char *path, const char *mode);
+     // 与套接字不同，IO返回的是FILE结构体指针，而套接字返回文件描述符
+
+/*
+path: 打开文件路径
+mode: 打开文件模式
+*/
+ 
+int fclose(FIFE *stream)
+    // 关闭当前文件流
+ 
+int fgetc(FIFE *stream)
+	// 读取一个字符，返回该字符转换为int类型的值
+ 
+int fputc(int c, FIFE *stream);
+	// 把c转换为对应的字符，写到stream里
+ 
+char *fgets(char *s, int size, FIFE *stream);
+	  // 读到换行符或者EOF截止，结果保存到s中，会多保存一个'\0'
+ 
+int fputs(const char *s, FIFE *stream);
+	// 把s除去'\0'之外的字符写到stream里
+ 
+size_t fread(void *ptr, size_t size, size_t nmemb, FIFE *stream);
+	   // 读nmemb个元素，每个大小size字节，保存到ptr里
+ 
+size_t fwrite(const void *ptr, size_t size, size_t nmemb, FIFE *stream);
+	   // 写nmemb个元素，每个大小size字节，写到stream里
+
+
+// 利用fdopen函数将文件描述符转换为FILE结构体指针
+FILE * fdopen(int fildes, const char * mode);
+       // 成功时返回转换的FILE结构体指针，失败时返回NULL
+
+/*
+	fildes: 需要转换的文件描述符
+	mode: 将要创建的FILE结构体指针的模式信息
+*/
+
+
+// 反向转换
+#include <stdio.h>
+
+int fileno(FILE * stream);
+    // 成功时返回转换后的文件描述符，失败时返回-1
