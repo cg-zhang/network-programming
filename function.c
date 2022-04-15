@@ -551,3 +551,17 @@ FILE * fdopen(int fildes, const char * mode);
 
 int fileno(FILE * stream);
     // 成功时返回转换后的文件描述符，失败时返回-1
+
+
+// dup & dup2
+// FILE读写指针无法实现半关闭，因此需要复制文件描述符
+#include <unistd.h>
+
+int dup(int fildes);
+int dup2(int fildes, int fildes2);
+    // 成功时返回复制的文件描述符，失败时返回-1
+
+/*
+	fildes: 需要复制的文件描述符
+	fildes2: 明确指定的文件描述符整数值
+*/
