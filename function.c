@@ -565,3 +565,83 @@ int dup2(int fildes, int fildes2);
 	fildes: 需要复制的文件描述符
 	fildes2: 明确指定的文件描述符整数值
 */
+
+
+// 创建保存epoll文件描述符的空间，被称为“epoll例程”
+#include <sys/epoll.h>
+
+int epoll_create(int size);
+    // 成功时返回epoll文件描述符，失败时返回-1(size用来指定例程大小，实际后续版本忽略此参数，内核会动态调整其大小)
+
+
+// 向空间注册并注销文件描述符
+#include <sys/epoll.h>
+
+int epoll_ctl(int epfd, int op, int fd, struct epoll_event * event);
+    // 成功时返回0，失败返回-1
+
+/*
+	epfd: 用于注册监视对象的epoll例程的文件描述符
+	op: 用于指定监视对象的添加、删除或者更改等操作
+
+	    EPOLL_CTL_ADD: 将文件描述符注册到epoll例程
+        EPOLL_CTL_DEL: 从epoll例程中删除文件描述符
+        EPOLL_CTL_MOD:更改注册的文件描述符的关注事件发生情况，也即修改event
+
+	fd: 需要注册的监视对象文件描述符
+	event: 监视对象的事件类型
+*/
+
+
+struct epoll_event
+{
+	__uint32_t events;
+	epoll_data_t data;
+};
+
+/* events:
+   EPOLLIN: 需要读取数据的情况
+   EPOLLOUT: 输出缓冲为空，可以立即发送数据的情况
+   EPOLLPRI: 收到OOB数据的情况(带外数据，也即紧急数据)
+   EPOLLRDHUP: 断开连接或半关闭的情况，这在边缘触发方式下非常有用
+   EPOLLERR: 发生错误的情况
+   EPOLLET: 以边缘触发的方式得到事件通知
+   EPOLLONESHOT: 发生一次事件后，相应文件描述符不再收到事件通知。因此需要向epoll_ctl函数的第二个参数传递EPOLL_CTL_MOD，再次设置事件
+*/
+
+typedef union epoll_data
+{
+	void *ptr;
+	int fd;
+	__uint32_t u32;
+	__uint64_t u64;
+} epoll_data_t;
+
+
+// 等待描述符发生变化，调用后，第二个参数保存了发生事件的文件描述符集合，不需遍历
+#include <sys/epoll.h>
+
+int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);
+    // 成功时返回发生事件的文件描述符数，失败时返回-1
+
+/*
+	epfd: 表示事件发生监视范围的epoll例程的文件描述符
+	events: 保存发生事件的文件描述符集合的结构体地址值(动态分配: malloc(sizeof(struct epoll_event)*EPOLL_SIZE))
+	maxevents: 第二个参数中可以保存的最大事件数(EPOLL_SIZE宏常量)
+	timeout: 以1/1000秒为单位的等待时间，传递-1时，一直等待直到发生事件
+*/
+
+
+// 更改或读取文件属性
+#include <fcnt1.h>
+
+int fcnt1(int filedes, int cmd, ...);
+    // 成功时返回cmd参数相关值，失败时返回-1
+
+/*
+	filedes: 属性更改目标的文件描述符
+	cmd: 表示函数调用的目的
+
+	     F_GETFL: 获得属性
+	     F_SETFL: 更改属性
+*/
