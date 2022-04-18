@@ -645,3 +645,65 @@ int fcnt1(int filedes, int cmd, ...);
 	     F_GETFL: 获得属性
 	     F_SETFL: 更改属性
 */
+
+
+// 线程创建
+#include <pthread.h>
+
+int pthread_create(
+	pthread_t * restrict thread, const pthread_attr_t * restrict attr,
+	void * (* start_routine)(void *), void * restrict arg
+	);
+    // 成功时返回9，失败返回其他值
+
+/*
+	thread: 保存新创建线程ID的变量地址值
+	attr: 用于传递线程属性的参数，传递NULL时，默认属性
+	start_routine: 相当于线程main函数的、在单独执行流中执行的函数地址值(函数指针)
+	arg: 通过第三个参数传递调用函数时包含传递参数信息的变量地址值
+*/
+
+
+// 等待线程结束(调用该函数的进程进入等待状态，直到线程ID对应的线程终止为止)
+#include <pthread.h>
+
+int pthread_t_join(pthread_t thread, void ** status);
+    // 成功时返回0，失败返回其他值
+
+/*
+	thread: 该线程ID对应的线程终止后才会从该函数返回
+	status: 保存线程的main函数返回值的指针变量地址值
+*/
+
+
+// 互斥量
+#include <pthread.h>
+
+int pthread_mutex_init(pthread_mutex_t * mutex, const pthread_mutexattr_t * attr);
+int pthread_mutex_destroy(pthread_mutex_t * mutex);
+    // 创建/销毁互斥量，成功时返回0，失败返回其他值
+
+/*
+	mutex: 创建互斥量时传递保存互斥量的变量地址值，销毁时需要传递相应的互斥量地址值
+	attr: 传递即将创建的互斥量属性，没有则传递NULL
+*/
+
+
+// 互斥量锁住/释放临界区
+#include <pthread.h>
+
+int pthread_mutex_lock(pthread_mutex_t * mutex);
+int pthread_mutex_unlock(pthread_mutex_t * mutex);
+    // 成功时返回0，失败返回其他值
+
+
+// 销毁线程(join方法会使调用方陷入阻塞)
+#include <pthread.h>
+
+int pthread_detach(pthread_t thread);
+    // 成功时返回0，失败返回其他值
+    // 调用该函数不会引起线程终止或进入阻塞状态，可以通过该函数引导销毁线程创建的内存空间
+
+/*
+	thread: 终止的同时需要销毁的线程ID
+*/
